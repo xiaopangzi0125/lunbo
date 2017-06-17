@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;padding: 0;
+			}
+			li{
+				list-style: none;
+			}
+			#box{
+				width: 560px;
+				height: 302px;
+				border: 2px solid black;
+				margin: 0 auto;
+			}
+			#box ul{
+				overflow: hidden;
+				float: left;
+			}
+			#box ul li{
+				width: 76px;
+				height: 40px;
+				float: left;
+				border: 2px solid #CCCCCC;
+				text-align: center;
+				line-height: 40px;
+				background: #ededed;
+			}
+			#show{
+				width: 476px;
+				height: 253px;
+				border-top: 2px solid #ccc;
+				float: left;
+				font-size: 96px;
+				text-align: center;
+				line-height: 260px;
+				letter-spacing: 1.5;
+			}
+			#day{
+				overflow: hidden;
+				float: right;
+			}
+			#day div{
+				width: 78px;
+				height: 125px;
+				border: 2px solid #ccc;
+				text-align: center;
+				line-height: 125px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<ul>
+				<li>Sun</li>
+				<li>Mon</li>
+				<li>Tus</li>
+				<li>Wed</li>
+				<li>Thu</li>
+				<li>Fri</li>
+				<li>Sta</li>
+			</ul>
+			<div id="show">
+				<span></span>
+			</div>
+			<div id="day">
+				<div class="am">AM</div>
+				<div class="pm">pM</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="jquery-1.12.4.min.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				var timer = setInterval(function(){
+					
+					//显示时间
+					var hour = toDouble(new Date().getHours());
+					var min = toDouble(new Date().getMinutes());
+					var sed = toDouble(new Date().getSeconds());
+					var html = hour + ":" + min + ":" +sed; 
+					$("#show span").text(html);
+					
+				},1000)
+				
+				//上午下午显示
+				var hour = toDouble(new Date().getHours());
+				if(hour >= 12){
+					$(".pm").css({background: "pink" }).next(".pm").css({background: "white" });
+					console.log(hour);
+				}else{
+					$(".am").css({background: "pink" }).prev(".pm").css({background: "white" });
+				}
+				
+				//切换相应星期
+				var week = new Date().getDay();
+				$("#box li").eq(week).css({background:"pink"});
+				
+				function toDouble(num){
+					if(num < 10){
+						return "0"+num
+					}else{
+						return num;
+					}
+				}
+				
+				
+				
+				
+				
+			})
+		</script>
+	</body>
+</html>

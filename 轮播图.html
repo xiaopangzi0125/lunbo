@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;padding: 0;
+			}
+			li{
+				list-style: none;
+			}
+			#container{
+				width: 1000px;
+				height: 330px;
+				border: 6px solid black;
+				margin: 200px auto;
+				background: black;
+			}
+			#box{
+				width: 346px;
+				float: left;
+				overflow: hidden;
+			}
+			#box li{
+				float: left;
+				cursor: pointer;
+				border-bottom: 5px solid;
+				border-right: 5px solid;
+				position: relative;
+			}
+			#box .cover{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				background: black;
+				opacity: 0.5;
+			}
+			/*#box .cover:nth-of-type(1){
+				display: none;
+			}*/
+			#box li img{
+				display: block;
+				width: 168px;
+				height: 106px;
+			}
+			#show{
+				width: 640px;
+				height:326px ;
+				overflow: hidden;
+				float: right;
+				position: relative;
+			}
+			#show ul{
+				position: absolute;
+				top: 0;
+				left:0;
+			}
+			#show li{
+				width: 640px;
+				height: 326px;
+				float: left;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+			#show .cover{
+				display: none;
+			}
+			#show li img{
+				width: 640px;
+				height: 326px;
+				display: none;
+			}
+			#prev,#next{
+				width: 44px;
+				height: 30px;
+				position: absolute;
+				right: 20px;
+				top:20px;
+				background: black;
+				opacity: 0.6;
+				margin-right: 10px;
+				color: white;
+				font-size: 20px;
+				text-align: center;
+				line-height: 30px;
+				cursor: pointer;
+				z-index: 999;
+			}
+			#prev{
+				right: 86px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="box">
+				<ul></ul>
+			</div>
+				
+			<div id="show">
+				<ul></ul>
+				<p id="prev"><</p>
+				<p id="next">></p>
+			</div>
+		</div>
+		
+		<!----------图片模板-------------->
+		<script type="text/html" id="pic">
+		<%for(var i = 0;i < products.length;i++){ 
+		%>
+			<li>
+				<img src="<%= products[i].url %>">
+				<div class="cover"></div>
+			</li>
+		<% } %>
+		</script>
+		
+		<script type="text/javascript" src="jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="template-native.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				//获取图片信息
+				$.getJSON("img.json",function(responseData){
+					var data = {
+						products : responseData
+					};
+					var html = template("pic",data);
+					$(html).appendTo("#box ul").eq(0).find(".cover").hide();
+					$(html).appendTo("#show ul").eq(0).find("img").show();
+//					$("#box ul").append(html);
+//					$("#show ul").append(html);
+					
+					//轮播图
+					var $imgs = $("#show img"),
+					len = $imgs.length,
+					imgWidth = $imgs.outerWidth(),
+					currentIndex = 0, 
+					nextIndex = 1,
+					timer = null;
+				console.log($imgs,len)
+				
+					//移入图片停止计时器
+					$("#show").hover(function(){
+						clearInterval(timer);
+					},function(){
+						timer = setInterval(move,2000);
+					}).trigger("mouseleave");
+					
+					//点击左侧图片出现相应图片
+					$("#box").on("click","li",function(){
+						if(currentIndex === $(this).index())
+							return;
+						nextIndex = $(this).index();
+						move();
+					});
+					
+					//向前翻页
+					$("#prev").on("click",function(){
+						nextIndex = currentIndex - 1;
+						if(nextIndex < 0){
+							nextIndex = len - 1;
+						}
+						move();
+					});
+					
+					//向后翻页
+					$("#next").click(move);
+					
+					//运动函数
+					function move(){
+						$imgs.eq(currentIndex).fadeOut().end()
+						     .eq(nextIndex).fadeIn();
+						     
+						$("#box div").eq(currentIndex).show().end().eq(nextIndex).hide();
+						
+						currentIndex = nextIndex;
+						nextIndex++;
+						if(nextIndex >= len)
+							nextIndex = 0;
+					}
+				})
+				
+			})
+		</script>
+	</body>
+</html>
